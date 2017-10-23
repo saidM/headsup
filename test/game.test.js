@@ -59,9 +59,9 @@ describe('Game', () => {
       const spy = sinon.spy(game.players[0], 'pay')
 
       game.start()
-      game.onPay('Player', 10)
+      game.pay('Player', 10)
 
-      // Called twice (one for the small blind from the start() method & one time for the explicit 'onPay')
+      // Called twice (one for the small blind from the start() method & one time for the explicit pay())
       expect(spy.called).to.be.true
     })
 
@@ -70,7 +70,7 @@ describe('Game', () => {
       game.start()
 
       const spy = sinon.spy(game.pot, 'add')
-      game.onPay('Player', 10)
+      game.pay('Player', 10)
 
       expect(spy.called).to.be.true
     })
@@ -80,19 +80,19 @@ describe('Game', () => {
       game.start()
 
       const spy = sinon.spy(game.pot, 'add')
-      game.onPay('Player', 10.5)
+      game.pay('Player', 10.5)
 
       expect(spy.calledWith('Player', 10)).to.be.true
     })
   })
 
-  describe('onFold(name)', () => {
+  describe('fold(name)', () => {
     it('calls the win() method on the winner', () => {
       const game = new Game()
       game.start()
 
       const spy = sinon.spy(game.players[1], 'win')
-      game.onFold('Player')
+      game.fold('Player')
 
       expect(spy.calledOnce).to.be.true
     })
@@ -102,19 +102,19 @@ describe('Game', () => {
       game.start()
 
       const spy = sinon.spy(game, 'start')
-      game.onFold('Player')
+      game.fold('Player')
 
       expect(spy.calledOnce).to.be.true
     })
   })
 
-  describe('onCall(name)', () => {
+  describe('call(name)', () => {
     it('calls the pay() method on the player', () => {
       const game = new Game()
       game.start()
 
       const spy = sinon.spy(game.players[0], 'pay')
-      game.onCall('Player')
+      game.call('Player')
 
       expect(spy.calledWith(10, 'CALL')).to.be.true
     })
@@ -124,7 +124,7 @@ describe('Game', () => {
       game.start()
 
       expect(game.toCall).to.equal(10)
-      game.onCall('Player')
+      game.call('Player')
       expect(game.toCall).to.equal(0)
     })
 
@@ -133,7 +133,7 @@ describe('Game', () => {
         const game = new Game()
         game.start()
 
-        game.onCall('Player')
+        game.call('Player')
         expect(game.flop.length).to.equal(3)
       })
     })
@@ -145,7 +145,7 @@ describe('Game', () => {
 
         game.flop = [{}, {}, {}]
 
-        game.onCall('Player')
+        game.call('Player')
         expect(game.turn).not.to.be.null
       })
     })
@@ -158,7 +158,7 @@ describe('Game', () => {
         game.flop = [{}, {}, {}]
         game.turn = {}
 
-        game.onCall('Player')
+        game.call('Player')
         expect(game.river).not.to.be.null
       })
     })
@@ -173,20 +173,20 @@ describe('Game', () => {
         game.river = {}
 
         const spy = sinon.spy(game, 'end')
-        game.onCall('Player')
+        game.call('Player')
 
         expect(spy.calledOnce).to.be.true
       })
     })
   })
 
-  describe('onRaise(name, amount)', () => {
+  describe('raise(name, amount)', () => {
     it('calls the pay() method on the player instance', () => {
       const game = new Game()
       game.start()
 
       const spy = sinon.spy(game.players[1], 'pay')
-      game.onRaise('Computer', 10)
+      game.raise('Computer', 10)
 
       expect(spy.calledOnce).to.be.true
       expect(spy.calledWith(10, 'RAISE')).to.be.true
@@ -196,7 +196,7 @@ describe('Game', () => {
       const game = new Game()
       game.start()
 
-      game.onRaise('Computer', 50)
+      game.raise('Computer', 50)
       expect(game.toCall).to.equal(50)
     })
   })
