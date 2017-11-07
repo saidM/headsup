@@ -1,6 +1,7 @@
 'use strict'
 
-const app = require('express')()
+const express = require('express')
+const app = express()
 const server = require('http').createServer(app)
 const io = require('socket.io')(server)
 
@@ -10,7 +11,9 @@ const Pot = require('./lib/pot')
 const Player = require('./lib/player')
 
 app.set('view engine', 'ejs')
-  
+app.use(express.static('public'))
+
+
 let socket = null
 const game = new Game()
 game.start()
@@ -56,7 +59,7 @@ app.get('/', (req, res) => {
     return res.send('YOU WIN')
   }
 
-  res.render('index.ejs', {chips: player.chips, computerChips: computer.chips, cards: player.cards, pot: game.pot, flop: game.flop, toCall: game.toCall, turn: game.turn, river: game.river})
+  res.render('index.ejs', {chips: player.chips, computerChips: computer.chips, cards: player.cards, pot: game.pot, flop: game.flop, toCall: game.toCall, turn: game.turn, river: game.river, potTotal: game.pot.total()})
 })
 
 server.listen(3000, '127.0.0.1')

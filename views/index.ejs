@@ -2,42 +2,90 @@
 <html>
 <head>
   <meta charset="utf-8">
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700, 800" rel="stylesheet">
+  <style type="text/css">
+    body {background: #000; color: #fff; font-family: 'Open Sans'; font-size: 14px; height: 100vh}
+    body {
+      background: #0cebeb; /* fallback for old browsers */
+      background: -webkit-linear-gradient(to right, #0cebeb, #20e3b2, #29ffc6); /* Chrome 10-25, Safari 5.1-6 */
+      background: linear-gradient(to right, #0cebeb, #20e3b2, #29ffc6); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    }
+    ul li, p {line-height: 2}
+    img {background: #fff; width: 70px; border-radius: 3px; padding: 2px}
+
+    div#table {width: 52.5%; height: 52.5vh; margin: 7.5% auto; margin-bottom: 5%; background: url(/pool_table.png); border: 10px solid #004D40; border-radius: 50%; position: relative}
+    div#table div#computer, div#table div#player {position: absolute; left: -5%; top: 30%; background: #fff; color: #000; text-align: center; width: 15%; border-radius: 5px; opacity: 0.7}
+    div#table div#player {left: inherit; right: -5%}
+    div#table div h3 {margin: 0; margin-top: 10%; padding: 0; font-size: 12px; text-transform: uppercase; font-weight: 600}
+    div#table div p {margin: 0; padding-bottom: 5%; font-weight: 800; font-size: 16px; border-bottom: 1px solid #22313F}
+    div#table div img {float: left; width: 49.5%; padding: 0; border-radius: 0}
+    div#table div img:first-of-type {border-right: 1px solid #22313F; border-bottom-left-radius: 5px}
+    div#table div img:last-of-type {border-bottom-right-radius: 5px}
+    div#table div#public-cards { position: absolute; top: 40%; left: 20%; right: 20%; text-align: center}
+    div#table div#public-cards img {width: 70px; border-radius: 3px; padding: 3px; display: block}
+    div#table div#public-cards img + img {margin-left: 3px}
+    div#table div#pot-total {position: absolute; left: 30%; right: 30%; text-align: center; bottom: 10%}
+    div#table div#pot-total p {border: 0; text-align: center}
+
+    div#pot {float: right; width: 15%; text-align: center}
+    div#pot h2 {margin: 0; padding: 0; font-size: 16px; font-weight: 700; margin-bottom: 5%}
+    div#pot ul {margin: 0; padding: 0; list-style-type: none}
+
+    div#actions {text-align: center}
+    div#actions button {background: transparent; border: 1px solid #fff; text-transform: uppercase; padding: 10px 20px; color: #fff; font-size: 16px; font-weight: 300; cursor: pointer; transition-duration: 0.5s}
+    div#actions button:hover {background: #fff; color: #22313F}
+    div#actions button + button {margin-left: 10px}
+  </style>
 </head>
 <body>
-  <h2>POT</h2>
-  <% pot.items.forEach(item => { %>
-    <%- JSON.stringify(item) %><br>
-  <% }) %>
-  <hr>
-  <h2><%= chips %> VS <%= computerChips %></h2>
-  <hr>
-  <h2>HAND</h2>
-  <pre><%- JSON.stringify(cards) %></pre>
-  <% if (flop.length === 3) { %>
-    <hr>
-    <h2>FLOP</h2>
-    <pre><%- JSON.stringify(flop) %></pre>
-  <% } %>
-  <% if (turn != null) { %>
-    <hr>
-    <h2>TURN</h2>
-    <pre><%- JSON.stringify(turn) %></pre>
-  <% } %>
-  <% if (river != null) { %>
-    <hr>
-    <h2>RIVER</h2>
-    <pre><%- JSON.stringify(river) %></pre>
-  <% } %>
-  
-  <hr>
-  <% if (toCall === 0) { %>
-    <button onclick="window.location.href = '/?action=call'">CHECK</button>
-    <button onclick="window.location.href = '/?action=raise&amount=100'">RAISE (100)</button>
-  <% } else { %>
-    <button onclick="window.location.href = '/?action=call'">CALL (<%= toCall %>)</button>
-    <button onclick="window.location.href = '/?action=raise&amount=<%= toCall * 2 %>'">RAISE (<%= toCall * 2 %>)</button>
-    <button onclick="window.location.href = '/?action=fold'">FOLD</button>
-  <% } %>
+  <div id="table">
+    <div id="computer">
+      <h3>Computer</h3>
+      <p style="border-bottom: 0"><%= computerChips %></p>
+    </div>
+    <div id="player">
+      <h3>Player</h3>
+      <p><%= chips %></p>
+      <% cards.forEach(card => { %>
+        <img src="/<%= card.rank.toString().toLowerCase() %>_of_<%= card.color.toLowerCase() %>.png">
+      <% }) %>
+    </div>
+    <div id="public-cards">
+      <% if (flop.length === 3) { %>
+        <% flop.forEach(card => { %>
+          <img src="/<%= card.rank.toString().toLowerCase() %>_of_<%= card.color.toLowerCase() %>.png">
+        <% }) %>
+      <% } %>
+      <% if (turn != null) { %>
+      <img src="/<%= turn[0].rank.toString().toLowerCase() %>_of_<%= turn[0].color.toLowerCase() %>.png">
+      <% } %>
+      <% if (river != null) { %>
+        <img src="/<%= river[0].rank.toString().toLowerCase() %>_of_<%= river[0].color.toLowerCase() %>.png">
+      <% } %>
+    </div>
+    <div id="pot-total">
+      <p>POT: <%= potTotal %></p>
+    </div>
+  </div>
+  <div id="pot" style="display: none">
+    <h2>POT (<%= potTotal %>)</h2>
+    <ul>
+    <% pot.items.forEach(item => { %>
+    <li>[<%= item.name %>] <%= item.amount %>: <%= item.description %></li>
+    <% }) %>
+    </ul>
+  </div>
+  <div id="actions">
+    <% if (toCall === 0) { %>
+      <button onclick="window.location.href = '/?action=call'">CHECK</button>
+      <button onclick="window.location.href = '/?action=raise&amount=100'">RAISE (100)</button>
+    <% } else { %>
+      <button onclick="window.location.href = '/?action=call'">CALL (<%= toCall %>)</button>
+      <button onclick="window.location.href = '/?action=raise&amount=<%= toCall * 2 %>'">RAISE (<%= toCall * 2 %>)</button>
+      <button onclick="window.location.href = '/?action=fold'">FOLD</button>
+    <% } %>
+  </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
   <script type="text/javascript">

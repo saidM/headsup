@@ -1,10 +1,10 @@
 'use strict'
 
-const expect = require('chai').expect
-const sinon = require('sinon')
+const expect  = require('chai').expect
+const sinon   = require('sinon')
 
-const Game = require('../lib/game')
-const combos = require('../lib/combos')
+const Game    = require('../lib/game')
+const combos  = require('../lib/combos')
 
 describe('Game', () => {
   describe('constructor()', () => {
@@ -202,13 +202,13 @@ describe('Game', () => {
   })
 
   describe('end()', () => {
-    it('calls the getScore() method for each player', () => {
+    it('calls the score() method for each player', () => {
       const game = new Game()
       
       game.start()
       game.flop = game.deck.getCards(3)
 
-      const spy = sinon.spy(combos, 'getScore')
+      const spy = sinon.spy(combos, 'score')
       game.end()
 
       expect(spy.calledTwice).to.be.true
